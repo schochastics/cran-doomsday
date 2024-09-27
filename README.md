@@ -9,3 +9,5 @@ The interesting part of this thought experiment is, that the archival of one pac
 
 The CRAN Doomsday Clock calculates when the point in time is reached where CRAN
 only contains dependency free packages.
+
+The clock resets every day at noon, because - not surprisingly - some maintainers DO fix the issues but also new issues may arise in previously safe packages.
