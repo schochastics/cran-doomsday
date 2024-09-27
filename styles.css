@@ -1,0 +1,41 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+
+@font-face {
+    font-family: 'Zombie';
+    src: url('fonts/CurseoftheZombie.woff2') format('woff2'),
+        url('fonts/CurseoftheZombie.woff') format('woff');
+}
+
+.countdown {
+    font-size: 2.5em;
+    color: red !important;
+    text-align: center;
+    font-family: "Zombie", sans-serif;
+}
+
+.large {
+    font-size: 2.5em;
+}
+
+.frame {
+    padding: 0.5em;
+    border-width: 5px;
+    border-style: solid;
+    border-color: red;
+}
+
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.right {
+    text-align: right;
+}

@@ -1,0 +1,148 @@
+---
+title: ""
+format: html
+css: styles.css
+---
+
+```{r}
+#| label: get-doomsday
+#| echo: false
+#| message: false
+#| cache: true
+library(igraph)
+library(dplyr)
+library(janitor)
+library(lubridate)
+library(tidyr)
+db <- tools::CRAN_package_db()
+# db[!is.na(db$Deadline), c("Package", "Deadline")]
+
+cran <- db |>
+    clean_names() |>
+    as_tibble() |>
+    select(package, reverse_imports, reverse_suggests) |>
+    dplyr::filter(!is.na(reverse_imports) | !is.na(reverse_suggests)) |>
+    pivot_longer(reverse_imports:reverse_suggests, values_to = "reverse_depends") |>
+    select(-name) |>
+    mutate(reverse_depends = strsplit(reverse_depends, ",")) |>
+    unnest(reverse_depends) |>
+    mutate(reverse_depends = trimws(reverse_depends)) |>
+    dplyr::filter(!is.na(reverse_depends)) |>
+    graph_from_data_frame()
+
+cran <- simplify(cran)
+
+danger <- db$Package[!is.na(db$Deadline)]
+danger <- danger[danger %in% V(cran)$name]
+
+archive_date <- db$Deadline[match(danger, db$Package)]
+V(cran)$archive_date <- as.character("2100-01-01")
+V(cran)$archive_date[match(danger, V(cran)$name)] <- archive_date
+for (i in seq_along(danger)) {
+    v <- match(danger[i], V(cran)$name)
+    dday <- as.Date(V(cran)$archive_date[v])
+    vbfs <- bfs(cran, v, "out", unreachable = FALSE, dist = TRUE)
+    mdist <- max(vbfs$dist)
+    for (d in seq_len(mdist)) {
+        idx <- which(vbfs$dist == d)
+        bye <- dday + days(14 * d)
+        V(cran)$archive_date[idx] <- as.character(pmin(as.Date(V(cran)$archive_date[idx]), bye, na.rm = TRUE))
+    }
+}
+
+archived <- sum(V(cran)$archive_date != "2100-01-01") / nrow(db)
+doomday <- as.Date(max(as.Date(V(cran)$archive_date[V(cran)$archive_date != "2100-01-01"])))
+
+date_df <- data.frame(
+    year = year(doomday),
+    month = month(doomday),
+    day = day(doomday),
+    hour = 12,
+    minute = 0,
+    second = 0
+)
+```
+```{r}
+#| label: transfer-data
+#| echo: false
+ojs_define(doom = date_df)
+```
+
+::::{.vertical-center}
+::::{.frame}
+
+```{ojs}
+//| echo: false
+//| output: asis
+// https://observablehq.com/@observablehq/firstcontactcountdown
+d3 = require("d3-time@2")
+function interval(then, now) {
+  if (then <= now) throw new Error("Time’s up!");
+  let t = now;
+  let years = d3.timeYear.count(now, then);
+  if ((t = d3.timeYear.offset(t, years)) > then) t = d3.timeYear.offset(t, -1), --years;
+  let months = d3.timeMonth.count(t, then);
+  if ((t = d3.timeMonth.offset(t, months)) > then) t = d3.timeMonth.offset(t, -1), --months;
+  let days = d3.timeDay.count(t, then);
+  if ((t = d3.timeDay.offset(t, days)) > then) t = d3.timeDay.offset(t, -1), --days;
+  let hours = d3.timeHour.count(t, then);
+  if ((t = d3.timeHour.offset(t, hours)) > then) t = d3.timeHour.offset(t, -1), --hours;
+  let minutes = d3.timeMinute.count(t, then);
+  if ((t = d3.timeMinute.offset(t, minutes)) > then) t = d3.timeMinute.offset(t, -1), --minutes;
+  let seconds = d3.timeSecond.count(t, then);
+  if ((t = d3.timeSecond.offset(t, seconds)) > then) t = d3.timeSecond.offset(t, -1), --seconds;
+  return {years: years, months: months, days: days, hours: hours, minutes: minutes, seconds: seconds};
+//  return `Seconds left ${seconds}`
+}
+
+function formatInterval(interval) {
+  let format = [];
+  for (const key in interval) {
+    if (interval[key] === 1) {
+      format.push(`${interval[key]} ${key.slice(0, -1)}`);
+    } else if (format.length || interval[key] > 1) {
+      format.push(`${interval[key]} ${key}`);
+    }
+  }
+  if (format.length > 1) {
+    format[format.length - 1] = `and ${format[format.length - 1]}`;
+  }
+
+  return format.join(",\n");
+}
+
+templateFunction = (interval) => {
+  return html`<div class="countdown">
+  <span class="time">${interval.years} YEARS</span>
+  <span class="time">${interval.months} MONTHS</span>
+  <span class="occupation">${interval.days} DAYS</span>
+  <br>
+  <span class="occupation">${interval.hours} HOURS</span>
+  <span class="occupation">${interval.minutes} MINUTES</span>
+  <span class="occupation">${interval.seconds} SECONDS</span>
+</div>`
+}
+
+then = new Date(Date.UTC(doom.year,doom.month,doom.day,doom.hour,doom.minute,doom.second))
+
+now = {
+  while (true) {
+    const date = new Date(Math.ceil((Date.now() + 1) / 1000) * 1000);
+    yield Promises.when(date, date);
+  }
+}
+
+// formatInterval(interval(then, now))
+templateFunction(interval(then,now))
+```
+
+:::{.large}
+left until `r round(archived*100,2)`% of all CRAN packages will be archived.
+:::
+
+::::
+:::{.right}
+[what is this?](explain.qmd)
+:::
+::::
+
