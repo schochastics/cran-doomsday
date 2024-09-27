@@ -139,6 +139,10 @@ templateFunction(interval(then,now))
 until `r round(archived*100,2)`% of all CRAN packages will be archived.
 :::
 
+:::{.right .small}
+(last update: `r Sys.time()`)
+:::
+
 ::::
 :::{.right}
 [what is this?](https://github.com/schochastics/cran-doomsday/blob/main/README.md)
