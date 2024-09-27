@@ -1,20 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+
 body {
     background-color: black;
     color: white;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
 
-@font-face {
-    font-family: 'Zombie';
-    src: url('fonts/CurseoftheZombie.woff2') format('woff2'),
-        url('fonts/CurseoftheZombie.woff') format('woff');
-}
-
 .countdown {
-    font-size: 2.5em;
+    font-size: 3.5em;
     color: red !important;
     text-align: center;
-    font-family: "Zombie", sans-serif;
+    font-family: "Creepster", system-ui;
 }
 
 .large {

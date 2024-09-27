@@ -1,1 +1,0 @@
-Sitemap: https://schochastics.github.io/cran-doomsday/sitemap.xml
