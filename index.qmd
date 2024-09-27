@@ -142,7 +142,7 @@ left until `r round(archived*100,2)`% of all CRAN packages will be archived.
 
 ::::
 :::{.right}
-[what is this?](explain.qmd)
+[what is this?](explain.html)
 :::
 ::::
 
