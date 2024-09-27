@@ -17,9 +17,9 @@ db <- tools::CRAN_package_db()
 
 cran <- db |>
     as_tibble() |>
-    select(package, `Reverse Imports`, `Reverse Suggests`) |>
-    dplyr::filter(!is.na(`Reverse Imports`) | !is.na(`Reverse Suggests`)) |>
-    pivot_longer(`Reverse Imports`:`Reverse Suggests`, values_to = "reverse_depends") |>
+    select(Package, `Reverse imports`, `Reverse suggests`) |>
+    dplyr::filter(!is.na(`Reverse imports`) | !is.na(`Reverse suggests`)) |>
+    pivot_longer(`Reverse imports`:`Reverse suggests`, values_to = "reverse_depends") |>
     select(-name) |>
     mutate(reverse_depends = strsplit(reverse_depends, ",")) |>
     unnest(reverse_depends) |>
