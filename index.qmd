@@ -8,21 +8,18 @@ css: styles.css
 #| label: get-doomsday
 #| echo: false
 #| message: false
-#| cache: true
 library(igraph)
 library(dplyr)
-library(janitor)
 library(lubridate)
 library(tidyr)
 db <- tools::CRAN_package_db()
 # db[!is.na(db$Deadline), c("Package", "Deadline")]
 
 cran <- db |>
-    clean_names() |>
     as_tibble() |>
-    select(package, reverse_imports, reverse_suggests) |>
-    dplyr::filter(!is.na(reverse_imports) | !is.na(reverse_suggests)) |>
-    pivot_longer(reverse_imports:reverse_suggests, values_to = "reverse_depends") |>
+    select(package, `Reverse Imports`, `Reverse Suggests`) |>
+    dplyr::filter(!is.na(`Reverse Imports`) | !is.na(`Reverse Suggests`)) |>
+    pivot_longer(`Reverse Imports`:`Reverse Suggests`, values_to = "reverse_depends") |>
     select(-name) |>
     mutate(reverse_depends = strsplit(reverse_depends, ",")) |>
     unnest(reverse_depends) |>

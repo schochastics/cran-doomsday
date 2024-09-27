@@ -22,7 +22,6 @@ jobs:
           packages: |
             any::igraph
             any::dplyr
-            any::janitor
             any::lubridate
             any::tidyr
 
