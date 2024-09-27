@@ -137,7 +137,7 @@ templateFunction(interval(then,now))
 ```
 
 :::{.large}
-left until `r round(archived*100,2)`% of all CRAN packages will be archived.
+until `r round(archived*100,2)`% of all CRAN packages will be archived.
 :::
 
 ::::
