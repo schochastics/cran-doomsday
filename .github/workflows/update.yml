@@ -1,0 +1,38 @@
+on:
+  schedule:
+    - cron: '0 12 * * *'
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::igraph
+            any::dplyr
+            any::janitor
+            any::lubridate
+            any::tidyr
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Render and Publish
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+          path: ./index.qmd
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
