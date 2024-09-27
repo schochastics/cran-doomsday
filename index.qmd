@@ -2,11 +2,13 @@
 title: ""
 format: html
 css: styles.css
+execute: 
+  echo: false
+  messages: false
 ---
 
 ```{r}
 #| label: get-doomsday
-#| echo: false
 #| message: false
 library(igraph)
 library(dplyr)
@@ -61,7 +63,6 @@ date_df <- data.frame(
 ```
 ```{r}
 #| label: transfer-data
-#| echo: false
 ojs_define(doom = date_df)
 ```
 
@@ -69,8 +70,6 @@ ojs_define(doom = date_df)
 ::::{.frame}
 
 ```{ojs}
-//| echo: false
-//| output: asis
 // https://observablehq.com/@observablehq/firstcontactcountdown
 d3 = require("d3-time@2")
 function interval(then, now) {
@@ -128,7 +127,10 @@ now = {
     yield Promises.when(date, date);
   }
 }
+```
 
+```{ojs}
+//| output: asis
 // formatInterval(interval(then, now))
 templateFunction(interval(then,now))
 ```
@@ -139,7 +141,7 @@ until `r round(archived*100,2)`% of all CRAN packages will be archived.
 
 ::::
 :::{.right}
-[what is this?](explain.html)
+[what is this?](https://github.com/schochastics/cran-doomsday/blob/main/README.md)
 :::
 ::::
 
