@@ -22,10 +22,15 @@ jobs:
         with:
           r-version: '4.4.1'
 
+      - name: System requirements
+        run: |
+          sudo apt-get install --no-install-recommends -y \
+          libssl-dev \
+          libcurl4-openssl-dev \
+          libxml2-dev
       - name: Install R Dependencies
         uses: r-lib/actions/setup-renv@v2
         with:
-          cache: always  
           cache-version: 1
 
       - name: Render and Publish
