@@ -24,12 +24,14 @@ jobs:
 
       - name: System requirements
         run: |
+          sudo apt-get update
           sudo apt-get install --no-install-recommends -y \
           libssl-dev \
           libcurl4-openssl-dev \
           libxml2-dev \
           libharfbuzz-dev \
-          libfribidi-dev
+          libfribidi-dev \
+          libglpk-dev
       - name: Install R Dependencies
         uses: r-lib/actions/setup-renv@v2
         with:
